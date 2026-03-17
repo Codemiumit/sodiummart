@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details - SodiumMart</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0EA5E9',
+            'primary-dark': '#0284C7',
+            secondary: '#1E293B',
+            accent: '#F59E0B',
+            success: '#10B981',
+            danger: '#EF4444'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .thumbnail.active {
+      border-color: #0EA5E9;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans">
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <a href="/" class="flex items-center space-x-2">
+          <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+            <span class="text-white font-bold text-xl">S</span>
+          </div>
+          <span class="text-2xl font-bold text-secondary">SodiumMart</span>
+        </a>
+        
+        <nav class="hidden md:flex items-center space-x-8">
+          <a href="/" class="text-gray-700 hover:text-primary font-medium">Home</a>
+          <a href="/products.html" class="text-gray-700 hover:text-primary font-medium">Products</a>
+          <a href="/products.html?featured=true" class="text-gray-700 hover:text-primary font-medium">Featured</a>
+        </nav>
+
+        <div class="flex items-center space-x-4">
+          <a href="/cart.html" class="p-2 text-gray-600 hover:text-primary relative">
+            <i class="fas fa-shopping-cart text-lg"></i>
+            <span id="cart-count" class="absolute -top-1 -right-1 bg-accent text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
+          </a>
+          <div id="auth-buttons">
+            <a href="/login.html" class="px-4 py-2 text-gray-700 hover:text-primary font-medium">Login</a>
+            <a href="/register.html" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">Sign Up</a>
+          </div>
+          <div id="user-menu" class="hidden relative">
+            <button onclick="toggleUserMenu()" class="flex items-center space-x-2 text-gray-700">
+              <i class="fas fa-user-circle text-xl"></i>
+              <span id="user-name"></span>
+            </button>
+            <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
+              <a href="/orders.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-50"><i class="fas fa-box mr-2"></i>My Orders</a>
+              <button onclick="logout()" class="w-full text-left px-4 py-2 text-danger hover:bg-gray-50"><i class="fas fa-sign-out-alt mr-2"></i>Logout</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <div id="product-detail" class="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div class="flex flex-col lg:flex-row">
+        <div class="lg:w-1/2 p-8">
+          <div class="mb-4">
+            <img id="main-image" src="" alt="" class="w-full h-96 object-cover rounded-xl">
+          </div>
+          <div id="thumbnail-container" class="flex gap-2 overflow-x-auto">
+          </div>
+        </div>
+        
+        <div class="lg:w-1/2 p-8">
+          <nav class="text-sm text-gray-500 mb-4">
+            <a href="/" class="hover:text-primary">Home</a> / 
+            <a href="/products.html" class="hover:text-primary">Products</a> / 
+            <span id="product-category" class="text-gray-700"></span>
+          </nav>
+          
+          <h1 id="product-name" class="text-3xl font-bold text-secondary mb-4"></h1>
+          
+          <div class="flex items-center gap-4 mb-4">
+            <span id="product-price" class="text-3xl font-bold text-primary"></span>
+            <span id="product-original-price" class="text-xl text-gray-400 line-through hidden"></span>
+            <span id="product-discount" class="bg-accent text-white text-sm px-2 py-1 rounded hidden"></span>
+          </div>
+          
+          <p id="product-stock" class="text-sm mb-6"></p>
+          
+          <div class="border-t border-b py-4 mb-6">
+            <h3 class="font-semibold mb-2">Description</h3>
+            <p id="product-description" class="text-gray-600 leading-relaxed"></p>
+          </div>
+          
+          <div class="mb-6">
+            <label class="block font-medium mb-2">Quantity</label>
+            <div class="flex items-center gap-4">
+              <div class="flex items-center border rounded-lg">
+                <button onclick="updateQuantity(-1)" class="px-4 py-2 hover:bg-gray-100">-</button>
+                <input type="number" id="quantity" value="1" min="1" class="w-16 text-center border-none focus:outline-none">
+                <button onclick="updateQuantity(1)" class="px-4 py-2 hover:bg-gray-100">+</button>
+              </div>
+              <button id="add-to-cart-btn" class="flex-1 bg-primary text-white py-3 rounded-lg hover:bg-primary-dark font-semibold">
+                <i class="fas fa-cart-plus mr-2"></i>Add to Cart
+              </button>
+            </div>
+          </div>
+          
+          <div class="flex gap-4">
+            <button onclick="buyNow()" class="flex-1 bg-accent text-white py-3 rounded-lg hover:bg-yellow-600 font-semibold">
+              Buy Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold text-secondary mb-6">Related Products</h2>
+      <div id="related-products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-secondary text-white py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p>&copy; 2024 SodiumMart. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    let currentProduct = null;
+    let selectedQuantity = 1;
+
+    async function loadProduct() {
+      const params = new URLSearchParams(window.location.search);
+      const slug = params.get('slug');
+      
+      if (!slug) {
+        window.location.href = '/products.html';
+        return;
+      }
+
+      try {
+        const { product } = await products.getBySlug(slug);
+        currentProduct = product;
+        
+        document.title = `${product.name} - SodiumMart`;
+        
+        const price = product.salePrice || product.price;
+        const originalPrice = product.salePrice ? product.price : null;
+        const discount = originalPrice ? Math.round((1 - price / originalPrice) * 100) : 0;
+        
+        document.getElementById('product-name').textContent = product.name;
+        document.getElementById('product-category').textContent = product.category?.name || 'Uncategorized';
+        document.getElementById('product-price').textContent = `$${price.toFixed(2)}`;
+        document.getElementById('product-description').textContent = product.description;
+        
+        if (originalPrice) {
+          document.getElementById('product-original-price').textContent = `$${originalPrice.toFixed(2)}`;
+          document.getElementById('product-original-price').classList.remove('hidden');
+          document.getElementById('product-discount').textContent = `-${discount}%`;
+          document.getElementById('product-discount').classList.remove('hidden');
+        }
+        
+        const stockText = document.getElementById('product-stock');
+        if (product.stock > 0) {
+          stockText.innerHTML = '<span class="text-success"><i class="fas fa-check-circle mr-1"></i>In Stock</span>';
+          stockText.innerHTML += ` (${product.stock} available)`;
+        } else {
+          stockText.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle mr-1"></i>Out of Stock</span>';
+          document.getElementById('add-to-cart-btn').disabled = true;
+          document.getElementById('add-to-cart-btn').classList.add('opacity-50', 'cursor-not-allowed');
+        }
+
+        const mainImage = document.getElementById('main-image');
+        const images = product.images && product.images.length > 0 
+          ? product.images 
+          : ['https://via.placeholder.com/600x600?text=No+Image'];
+        
+        mainImage.src = images[0];
+        
+        const thumbnailContainer = document.getElementById('thumbnail-container');
+        thumbnailContainer.innerHTML = images.map((img, index) => `
+          <img src="${img}" onclick="changeImage('${img}')" class="thumbnail w-20 h-20 object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-primary ${index === 0 ? 'active' : ''}">
+        `).join('');
+
+        document.getElementById('add-to-cart-btn').onclick = () => addToCart(product, selectedQuantity);
+        
+        if (product.category) {
+          loadRelatedProducts(product.category._id);
+        }
+      } catch (error) {
+        console.error('Error loading product:', error);
+        window.location.href = '/products.html';
+      }
+    }
+
+    async function loadRelatedProducts(categoryId) {
+      try {
+        const { products: related } = await products.getAll({ category: categoryId, limit: 4 });
+        const container = document.getElementById('related-products');
+        
+        container.innerHTML = related
+          .filter(p => p._id !== currentProduct._id)
+          .slice(0, 4)
+          .map(product => renderProductCard(product))
+          .join('');
+      } catch (error) {
+        console.error('Error loading related products:', error);
+      }
+    }
+
+    function changeImage(src) {
+      document.getElementById('main-image').src = src;
+      document.querySelectorAll('.thumbnail').forEach(thumb => {
+        thumb.classList.toggle('active', thumb.src === src);
+      });
+    }
+
+    function updateQuantity(change) {
+      const input = document.getElementById('quantity');
+      const newValue = parseInt(input.value) + change;
+      if (newValue >= 1 && newValue <= (currentProduct?.stock || 1)) {
+        input.value = newValue;
+        selectedQuantity = newValue;
+      }
+    }
+
+    function buyNow() {
+      if (!auth.isLoggedIn()) {
+        window.location.href = '/login.html';
+        return;
+      }
+      addToCart(currentProduct, selectedQuantity);
+      window.location.href = '/checkout.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateCartCount();
+      updateAuthUI();
+      loadProduct();
+    });
+  </script>
+</body>
+</html>

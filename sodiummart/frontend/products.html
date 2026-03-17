@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products - SodiumMart</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0EA5E9',
+            'primary-dark': '#0284C7',
+            secondary: '#1E293B',
+            accent: '#F59E0B',
+            success: '#10B981',
+            danger: '#EF4444'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 font-sans">
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <a href="/" class="flex items-center space-x-2">
+          <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+            <span class="text-white font-bold text-xl">S</span>
+          </div>
+          <span class="text-2xl font-bold text-secondary">SodiumMart</span>
+        </a>
+        
+        <nav class="hidden md:flex items-center space-x-8">
+          <a href="/" class="text-gray-700 hover:text-primary font-medium">Home</a>
+          <a href="/products.html" class="text-primary font-medium">Products</a>
+          <a href="/products.html?featured=true" class="text-gray-700 hover:text-primary font-medium">Featured</a>
+        </nav>
+
+        <div class="flex items-center space-x-4">
+          <a href="/cart.html" class="p-2 text-gray-600 hover:text-primary relative">
+            <i class="fas fa-shopping-cart text-lg"></i>
+            <span id="cart-count" class="absolute -top-1 -right-1 bg-accent text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
+          </a>
+          <div id="auth-buttons">
+            <a href="/login.html" class="px-4 py-2 text-gray-700 hover:text-primary font-medium">Login</a>
+            <a href="/register.html" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">Sign Up</a>
+          </div>
+          <div id="user-menu" class="hidden relative">
+            <button onclick="toggleUserMenu()" class="flex items-center space-x-2 text-gray-700">
+              <i class="fas fa-user-circle text-xl"></i>
+              <span id="user-name"></span>
+            </button>
+            <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
+              <a href="/orders.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-50"><i class="fas fa-box mr-2"></i>My Orders</a>
+              <button onclick="logout()" class="w-full text-left px-4 py-2 text-danger hover:bg-gray-50"><i class="fas fa-sign-out-alt mr-2"></i>Logout</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex flex-col lg:flex-row gap-8">
+      <aside class="lg:w-1/4">
+        <div class="bg-white rounded-xl shadow-sm p-6">
+          <h3 class="font-semibold text-lg mb-4">Filters</h3>
+          
+          <div class="mb-6">
+            <h4 class="font-medium mb-2">Search</h4>
+            <input type="text" id="search-input" placeholder="Search products..." class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary">
+          </div>
+
+          <div class="mb-6">
+            <h4 class="font-medium mb-2">Category</h4>
+            <div id="category-filters" class="space-y-2">
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <h4 class="font-medium mb-2">Price Range</h4>
+            <div class="flex gap-2">
+              <input type="number" id="min-price" placeholder="Min" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary">
+              <input type="number" id="max-price" placeholder="Max" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-primary">
+            </div>
+          </div>
+
+          <button onclick="applyFilters()" class="w-full bg-primary text-white py-2 rounded-lg hover:bg-primary-dark">
+            Apply Filters
+          </button>
+        </div>
+      </aside>
+
+      <div class="lg:w-3/4">
+        <div class="flex justify-between items-center mb-6">
+          <div>
+            <h1 class="text-2xl font-bold text-secondary" id="page-title">All Products</h1>
+            <p class="text-gray-500" id="product-count">Showing 0 products</p>
+          </div>
+          <div class="flex items-center gap-4">
+            <select id="sort-select" onchange="sortProducts()" class="px-4 py-2 border rounded-lg focus:outline-none focus:border-primary">
+              <option value="">Sort By</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="name-asc">Name: A-Z</option>
+              <option value="name-desc">Name: Z-A</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        </div>
+
+        <div id="pagination" class="mt-8 flex justify-center gap-2">
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-secondary text-white py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p>&copy; 2024 SodiumMart. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    let currentPage = 1;
+    let currentParams = {};
+
+    async function loadCategories() {
+      try {
+        const { categories } = await categories.getAll();
+        const container = document.getElementById('category-filters');
+        
+        container.innerHTML = `
+          <label class="flex items-center">
+            <input type="radio" name="category" value="" checked class="mr-2">
+            All Categories
+          </label>
+        ` + categories.map(cat => `
+          <label class="flex items-center">
+            <input type="radio" name="category" value="${cat._id}" class="mr-2">
+            ${cat.name}
+          </label>
+        `).join('');
+      } catch (error) {
+        console.error('Error loading categories:', error);
+      }
+    }
+
+    async function loadProducts() {
+      const params = new URLSearchParams(window.location.search);
+      currentParams = {
+        page: currentPage,
+        limit: 12,
+        search: params.get('search') || '',
+        category: params.get('category') || '',
+        featured: params.get('featured') || '',
+        sort: document.getElementById('sort-select').value,
+        minPrice: document.getElementById('min-price').value,
+        maxPrice: document.getElementById('max-price').value
+      };
+
+      try {
+        const data = await products.getAll(currentParams);
+        const container = document.getElementById('products-grid');
+        
+        document.getElementById('product-count').textContent = `Showing ${data.products.length} of ${data.pagination.total} products`;
+        
+        if (data.products.length === 0) {
+          container.innerHTML = `
+            <div class="col-span-full text-center py-12">
+              <i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i>
+              <h3 class="text-xl font-semibold text-gray-600">No products found</h3>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = data.products.map(product => renderProductCard(product)).join('');
+        
+        renderPagination(data.pagination);
+        updatePageTitle();
+      } catch (error) {
+        console.error('Error loading products:', error);
+      }
+    }
+
+    function renderPagination(pagination) {
+      const container = document.getElementById('pagination');
+      let html = '';
+      
+      if (pagination.page > 1) {
+        html += `<button onclick="changePage(${pagination.page - 1})" class="px-4 py-2 border rounded-lg hover:bg-gray-50">Previous</button>`;
+      }
+      
+      for (let i = 1; i <= pagination.pages; i++) {
+        html += `<button onclick="changePage(${i})" class="px-4 py-2 border rounded-lg ${i === pagination.page ? 'bg-primary text-white' : 'hover:bg-gray-50'}">${i}</button>`;
+      }
+      
+      if (pagination.page < pagination.pages) {
+        html += `<button onclick="changePage(${pagination.page + 1})" class="px-4 py-2 border rounded-lg hover:bg-gray-50">Next</button>`;
+      }
+      
+      container.innerHTML = html;
+    }
+
+    function changePage(page) {
+      currentPage = page;
+      loadProducts();
+      window.scrollTo(0, 0);
+    }
+
+    function applyFilters() {
+      const category = document.querySelector('input[name="category"]:checked')?.value;
+      const url = new URL(window.location.href);
+      
+      url.searchParams.set('search', document.getElementById('search-input').value || '');
+      if (category) url.searchParams.set('category', category);
+      if (document.getElementById('min-price').value) url.searchParams.set('minPrice', document.getElementById('min-price').value);
+      if (document.getElementById('max-price').value) url.searchParams.set('maxPrice', document.getElementById('max-price').value);
+      
+      window.location.href = url.toString();
+    }
+
+    function sortProducts() {
+      applyFilters();
+    }
+
+    function updatePageTitle() {
+      const params = new URLSearchParams(window.location.search);
+      const title = document.getElementById('page-title');
+      
+      if (params.get('featured') === 'true') {
+        title.textContent = 'Featured Products';
+      } else if (params.get('search')) {
+        title.textContent = `Search: "${params.get('search')}"`;
+      } else {
+        title.textContent = 'All Products';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateCartCount();
+      updateAuthUI();
+      loadCategories();
+      loadProducts();
+      
+      const params = new URLSearchParams(window.location.search);
+      document.getElementById('search-input').value = params.get('search') || '';
+      document.getElementById('min-price').value = params.get('minPrice') || '';
+      document.getElementById('max-price').value = params.get('maxPrice') || '';
+      
+      if (params.get('category')) {
+        const radios = document.querySelectorAll('input[name="category"]');
+        radios.forEach(radio => {
+          if (radio.value === params.get('category')) radio.checked = true;
+        });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings - Admin - SodiumMart</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0EA5E9',
+            'primary-dark': '#0284C7',
+            secondary: '#1E293B',
+            accent: '#F59E0B',
+            success: '#10B981',
+            danger: '#EF4444'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="flex">
+    <aside class="w-64 bg-secondary text-white min-h-screen fixed">
+      <div class="p-6">
+        <a href="/" class="flex items-center space-x-2">
+          <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+            <span class="text-white font-bold text-xl">S</span>
+          </div>
+          <span class="text-xl font-bold">SodiumMart</span>
+        </a>
+      </div>
+      
+      <nav class="mt-6">
+        <a href="/admin/" class="flex items-center px-6 py-3 hover:bg-white/10">
+          <i class="fas fa-tachometer-alt w-6"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="/admin/products.html" class="flex items-center px-6 py-3 hover:bg-white/10">
+          <i class="fas fa-box w-6"></i>
+          <span>Products</span>
+        </a>
+        <a href="/admin/orders.html" class="flex items-center px-6 py-3 hover:bg-white/10">
+          <i class="fas fa-shopping-cart w-6"></i>
+          <span>Orders</span>
+        </a>
+        <a href="/admin/categories.html" class="flex items-center px-6 py-3 hover:bg-white/10">
+          <i class="fas fa-tags w-6"></i>
+          <span>Categories</span>
+        </a>
+        <a href="/admin/settings.html" class="flex items-center px-6 py-3 bg-primary/20 border-r-4 border-primary">
+          <i class="fas fa-cog w-6"></i>
+          <span>Settings</span>
+        </a>
+      </nav>
+    </aside>
+
+    <main class="flex-1 ml-64">
+      <header class="bg-white shadow-sm h-16 flex items-center justify-between px-8">
+        <h1 class="text-xl font-semibold text-secondary">Settings</h1>
+      </header>
+
+      <div class="p-8">
+        <div class="max-w-2xl">
+          <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Site Information</h2>
+            <form id="settings-form" class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Site Name</label>
+                <input type="text" id="site-name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-primary">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Site Logo URL</label>
+                <input type="text" id="site-logo" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-primary">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Contact Email</label>
+                <input type="email" id="contact-email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-primary">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Contact Phone</label>
+                <input type="tel" id="contact-phone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-primary">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                <textarea id="address" rows="3" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-primary"></textarea>
+              </div>
+              
+              <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">
+                Save Settings
+              </button>
+            </form>
+          </div>
+
+          <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Social Links</h2>
+            <form id="social-form" class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Facebook</label>
+                <input type="text" id="facebook" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-primary">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Twitter</label>
+                <input type="text" id="twitter" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-primary">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Instagram</label>
+                <input type="text" id="instagram" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-primary">
+              </div>
+              
+              <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">
+                Save Social Links
+              </button>
+            </form>
+          </div>
+
+          <div class="bg-white rounded-xl shadow-sm p-6">
+            <h2 class="text-xl font-semibold mb-4">Change Admin Password</h2>
+            <form id="password-form" class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+                <input type="password" name="current-password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-primary">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                <input type="password" name="new-password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-primary">
+              </div>
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                <input type="password" name="confirm-password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-primary">
+              </div>
+              
+              <button type="submit" class="px-6 py-2 bg-danger text-white rounded-lg hover:bg-red-600">
+                Change Password
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    async function loadSettings() {
+      try {
+        const { settings } = await settings.get();
+        
+        document.getElementById('site-name').value = settings.siteName || '';
+        document.getElementById('site-logo').value = settings.siteLogo || '';
+        document.getElementById('contact-email').value = settings.contactEmail || '';
+        document.getElementById('contact-phone').value = settings.contactPhone || '';
+        document.getElementById('address').value = settings.address || '';
+        document.getElementById('facebook').value = settings.socialLinks?.facebook || '';
+        document.getElementById('twitter').value = settings.socialLinks?.twitter || '';
+        document.getElementById('instagram').value = settings.socialLinks?.instagram || '';
+      } catch (error) {
+        console.error('Error loading settings:', error);
+      }
+    }
+
+    document.getElementById('settings-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const settingsData = {
+        siteName: document.getElementById('site-name').value,
+        siteLogo: document.getElementById('site-logo').value,
+        contactEmail: document.getElementById('contact-email').value,
+        contactPhone: document.getElementById('contact-phone').value,
+        address: document.getElementById('address').value
+      };
+      
+      try {
+        await settings.update(settingsData);
+        alert('Settings saved successfully!');
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+
+    document.getElementById('social-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const { settings } = await settings.get();
+      
+      const settingsData = {
+        siteName: settings.siteName,
+        siteLogo: settings.siteLogo,
+        contactEmail: settings.contactEmail,
+        contactPhone: settings.contactPhone,
+        address: settings.address,
+        socialLinks: {
+          facebook: document.getElementById('facebook').value,
+          twitter: document.getElementById('twitter').value,
+          instagram: document.getElementById('instagram').value
+        }
+      };
+      
+      try {
+        await settings.update(settingsData);
+        alert('Social links saved successfully!');
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+
+    document.getElementById('password-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const newPassword = e.target['new-password'].value;
+      const confirmPassword = e.target['confirm-password'].value;
+      
+      if (newPassword !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+      }
+      
+      if (newPassword.length < 6) {
+        alert('Password must be at least 6 characters!');
+        return;
+      }
+      
+      alert('Password change functionality would be implemented here with backend support.');
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!auth.isLoggedIn()) {
+        window.location.href = '/login.html';
+        return;
+      }
+      
+      const user = auth.getUser();
+      if (user.role !== 'admin') {
+        window.location.href = '/';
+        return;
+      }
+      
+      loadSettings();
+    });
+  </script>
+</body>
+</html>

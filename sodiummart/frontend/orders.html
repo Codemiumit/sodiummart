@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Orders - SodiumMart</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0EA5E9',
+            'primary-dark': '#0284C7',
+            secondary: '#1E293B',
+            accent: '#F59E0B',
+            success: '#10B981',
+            danger: '#EF4444'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-50 font-sans">
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <a href="/" class="flex items-center space-x-2">
+          <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+            <span class="text-white font-bold text-xl">S</span>
+          </div>
+          <span class="text-2xl font-bold text-secondary">SodiumMart</span>
+        </a>
+        
+        <div class="flex items-center space-x-4">
+          <div id="user-menu" class="relative">
+            <button onclick="toggleUserMenu()" class="flex items-center space-x-2 text-gray-700">
+              <i class="fas fa-user-circle text-xl"></i>
+              <span id="user-name"></span>
+            </button>
+            <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2">
+              <a href="/orders.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-50"><i class="fas fa-box mr-2"></i>My Orders</a>
+              <button onclick="logout()" class="w-full text-left px-4 py-2 text-danger hover:bg-gray-50"><i class="fas fa-sign-out-alt mr-2"></i>Logout</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-secondary mb-8">My Orders</h1>
+    
+    <div id="orders-list" class="space-y-6">
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+  <script>
+    function getStatusColor(status) {
+      const colors = {
+        pending: 'bg-yellow-100 text-yellow-800',
+        processing: 'bg-blue-100 text-blue-800',
+        shipped: 'bg-purple-100 text-purple-800',
+        delivered: 'bg-green-100 text-green-800',
+        cancelled: 'bg-red-100 text-red-800'
+      };
+      return colors[status] || 'bg-gray-100 text-gray-800';
+    }
+
+    function getStatusIcon(status) {
+      const icons = {
+        pending: 'fa-clock',
+        processing: 'fa-cog',
+        shipped: 'fa-shipping-fast',
+        delivered: 'fa-check-circle',
+        cancelled: 'fa-times-circle'
+      };
+      return icons[status] || 'fa-box';
+    }
+
+    async function loadOrders() {
+      try {
+        const { orders } = await orders.getUserOrders();
+        const container = document.getElementById('orders-list');
+        
+        if (orders.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-12 bg-white rounded-xl">
+              <i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i>
+              <h3 class="text-xl font-semibold text-gray-600 mb-2">No orders yet</h3>
+              <p class="text-gray-500 mb-4">Start shopping to see your orders here.</p>
+              <a href="/products.html" class="inline-block px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">Shop Now</a>
+            </div>
+          `;
+          return;
+        }
+        
+        container.innerHTML = orders.map(order => `
+          <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div class="bg-gray-50 p-4 flex flex-wrap justify-between items-center gap-4">
+              <div>
+                <p class="text-sm text-gray-500">Order ID</p>
+                <p class="font-mono font-semibold">#${order._id.slice(-8).toUpperCase()}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Date</p>
+                <p class="font-semibold">${new Date(order.createdAt).toLocaleDateString()}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Total</p>
+                <p class="font-bold text-primary text-lg">$${order.totalAmount.toFixed(2)}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Status</p>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.orderStatus)}">
+                  <i class="fas ${getStatusIcon(order.orderStatus)} mr-2"></i>
+                  ${order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)}
+                </span>
+              </div>
+            </div>
+            
+            <div class="p-4">
+              <h3 class="font-semibold mb-3">Order Items</h3>
+              <div class="space-y-3">
+                ${order.items.map(item => `
+                  <div class="flex items-center gap-4">
+                    <img src="${item.image || 'https://via.placeholder.com/60x60'}" alt="${item.name}" class="w-16 h-16 object-cover rounded">
+                    <div class="flex-1">
+                      <p class="font-medium">${item.name}</p>
+                      <p class="text-sm text-gray-500">Qty: ${item.quantity} × $${item.price.toFixed(2)}</p>
+                    </div>
+                    <p class="font-semibold">$${(item.price * item.quantity).toFixed(2)}</p>
+                  </div>
+                `).join('')}
+              </div>
+              
+              <div class="mt-4 pt-4 border-t">
+                <h4 class="font-medium mb-2">Shipping Address</h4>
+                <p class="text-gray-600 text-sm">
+                  ${order.shippingAddress.name}<br>
+                  ${order.shippingAddress.address}<br>
+                  ${order.shippingAddress.city}, ${order.shippingAddress.zip}<br>
+                  ${order.shippingAddress.phone}
+                </p>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Error loading orders:', error);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!auth.isLoggedIn()) {
+        window.location.href = '/login.html';
+        return;
+      }
+      
+      const user = auth.getUser();
+      document.getElementById('user-name').textContent = user.name.split(' ')[0];
+      
+      loadOrders();
+    });
+  </script>
+</body>
+</html>
